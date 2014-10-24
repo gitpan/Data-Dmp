@@ -2,8 +2,8 @@ NAME
     Data::Dmp - Dump Perl data structures
 
 VERSION
-    This document describes version 0.01 of Data::Dmp (from Perl
-    distribution Data-Dmp), released on 2014-10-21.
+    This document describes version 0.02 of Data::Dmp (from Perl
+    distribution Data-Dmp), released on 2014-10-24.
 
 SYNOPSIS
      use Data::Dmp; # exports dd() and dmp()

@@ -1,4 +1,4 @@
-package Data::Dmp;
+package Data::Dmp::Simple;
 
 our $DATE = '2014-10-24'; # DATE
 our $VERSION = '0.02'; # VERSION
@@ -7,6 +7,7 @@ use 5.010001;
 use strict;
 use warnings;
 
+use Data::Dmp ();
 use Scalar::Util qw(looks_like_number blessed reftype refaddr);
 
 require Exporter;
@@ -16,38 +17,8 @@ our @EXPORT = qw(dd dmp);
 # for when dealing with circular refs
 our %_seen_refaddrs;
 our %_subscripts;
-our @_fixups;
 
-# BEGIN COPY PASTE FROM Data::Dump
-my %esc = (
-    "\a" => "\\a",
-    "\b" => "\\b",
-    "\t" => "\\t",
-    "\n" => "\\n",
-    "\f" => "\\f",
-    "\r" => "\\r",
-    "\e" => "\\e",
-);
-
-# put a string value in double quotes
-sub _double_quote {
-    local($_) = $_[0];
-
-    # If there are many '"' we might want to use qq() instead
-    s/([\\\"\@\$])/\\$1/g;
-    return qq("$_") unless /[^\040-\176]/;  # fast exit
-
-    s/([\a\b\t\n\f\r\e])/$esc{$1}/g;
-
-    # no need for 3 digits in escape for these
-    s/([\0-\037])(?!\d)/sprintf('\\%o',ord($1))/eg;
-
-    s/([\0-\037\177-\377])/sprintf('\\x%02X',ord($1))/eg;
-    s/([^\040-\176])/sprintf('\\x{%X}',ord($1))/eg;
-
-    return qq("$_");
-}
-# END COPY PASTE FROM Data::Dump
+*_double_quote = \&Data::Dmp::_double_quote;
 
 sub _dump {
     my ($val, $subscript) = @_;
@@ -65,10 +36,7 @@ sub _dump {
     my $refaddr = refaddr($val);
     $_subscripts{$refaddr} //= $subscript;
     if ($_seen_refaddrs{$refaddr}++) {
-        push @_fixups, " " if @_fixups;
-        push @_fixups, "\$a->$subscript = \$a",
-            ($_subscripts{$refaddr} ? "->$_subscripts{$refaddr}" : ""), ";";
-        return "'fix'";
+        return "...";
     }
 
     my $class;
@@ -113,16 +81,12 @@ our $_is_dd;
 sub _dd_or_dmp {
     local %_seen_refaddrs;
     local %_subscripts;
-    local @_fixups;
 
     my $res;
     if (@_ > 1) {
         $res = "(" . join(", ", map {_dump($_, '')} @_) . ")";
     } else {
         $res = _dump($_[0], '');
-    }
-    if (@_fixups) {
-        $res = "do { my \$a = $res; " . join("", @_fixups) . " \$a }";
     }
 
     if ($_is_dd) {
@@ -137,7 +101,7 @@ sub dd { local $_is_dd=1; _dd_or_dmp(@_) }
 sub dmp { goto &_dd_or_dmp }
 
 1;
-# ABSTRACT: Dump Perl data structures
+# ABSTRACT: Dump Perl data structures (simpler version)
 
 __END__
 
@@ -147,33 +111,23 @@ __END__
 
 =head1 NAME
 
-Data::Dmp - Dump Perl data structures
+Data::Dmp::Simple - Dump Perl data structures (simpler version)
 
 =head1 VERSION
 
-This document describes version 0.02 of Data::Dmp (from Perl distribution Data-Dmp), released on 2014-10-24.
+This document describes version 0.02 of Data::Dmp::Simple (from Perl distribution Data-Dmp), released on 2014-10-24.
 
 =head1 SYNOPSIS
 
- use Data::Dmp; # exports dd() and dmp()
- dd [1, 2, 3];
+ use Data::Dmp::Simple; # exports dd() and dmp()
+ my $data = [1, 2]; push @$data, $data; # circular
+ dd $data; # => "[1, 2, ...]"
 
 =head1 DESCRIPTION
 
-This module, Data::Dmp, is inspired by L<Data::Dump> and is my personal
-experiment. I want some of Data::Dump's features which I currently need and
-don't need the others that I currently do not need. I also want a smaller code
-base so I can easily modify (or subclass) it for custom dumping requirements.
-
-Compared to Data::Dump, Data::Dmp is also pure-Perl, dumps Perl data structure
-as runnable Perl code, supports circular/blessed references. Unlike Data::Dump,
-Data::Dmp does not identify tied data, does not support globs, does not support
-filtering, and mostly does not bother to align hash keys, identify
-ranges/repetition pattern. This makes the code simpler.
-
-I originally created Data::Dmp when wanting to write L<Data::Dmp::Org>. At first
-I tried to modify Data::Dump, but then got distracted by the extra bits that I
-don't need.
+This module is like L<Data::Dmp> except it does I<not> necessarily produce a
+valid Perl code. In the case of circular references, it just dumps as C<"...">
+(like in Python or Ruby).
 
 =head1 FUNCTIONS
 
@@ -189,13 +143,7 @@ Exported by default. Return dump result as string.
 
 =head1 SEE ALSO
 
-L<Data::Dump> and other variations/derivate works in Data::Dump::*.
-
-L<Data::Dumper> and its variants.
-
-L<Data::Printer>.
-
-L<YAML>, L<JSON>, L<Storable>, L<Sereal>, and other serialization formats.
+L<Data::Dmp>
 
 =head1 HOMEPAGE
 
