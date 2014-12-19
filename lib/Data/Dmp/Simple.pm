@@ -1,7 +1,7 @@
 package Data::Dmp::Simple;
 
-our $DATE = '2014-10-24'; # DATE
-our $VERSION = '0.02'; # VERSION
+our $DATE = '2014-12-19'; # DATE
+our $VERSION = '0.03'; # VERSION
 
 use 5.010001;
 use strict;
@@ -115,7 +115,7 @@ Data::Dmp::Simple - Dump Perl data structures (simpler version)
 
 =head1 VERSION
 
-This document describes version 0.02 of Data::Dmp::Simple (from Perl distribution Data-Dmp), released on 2014-10-24.
+This document describes version 0.03 of Data::Dmp::Simple (from Perl distribution Data-Dmp), released on 2014-12-19.
 
 =head1 SYNOPSIS
 

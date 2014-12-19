@@ -1,7 +1,7 @@
 package Data::Dmp;
 
-our $DATE = '2014-10-24'; # DATE
-our $VERSION = '0.02'; # VERSION
+our $DATE = '2014-12-19'; # DATE
+our $VERSION = '0.03'; # VERSION
 
 use 5.010001;
 use strict;
@@ -101,6 +101,8 @@ sub _dump {
         $res = "\\"._dump($$val, $subscript);
     } elsif ($ref eq 'REF') {
         $res = "\\"._dump($$val, $subscript);
+    } elsif ($ref eq 'CODE') {
+        $res = "sub{'DUMMY'}";
     } else {
         die "Sorry, I can't dump $val (ref=$ref) yet";
     }
@@ -151,7 +153,7 @@ Data::Dmp - Dump Perl data structures
 
 =head1 VERSION
 
-This document describes version 0.02 of Data::Dmp (from Perl distribution Data-Dmp), released on 2014-10-24.
+This document describes version 0.03 of Data::Dmp (from Perl distribution Data-Dmp), released on 2014-12-19.
 
 =head1 SYNOPSIS
 
