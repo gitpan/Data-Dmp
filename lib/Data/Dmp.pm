@@ -1,7 +1,7 @@
 package Data::Dmp;
 
 our $DATE = '2014-12-28'; # DATE
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
 
 use 5.010001;
 use strict;
@@ -153,7 +153,7 @@ Data::Dmp - Dump Perl data structures
 
 =head1 VERSION
 
-This document describes version 0.04 of Data::Dmp (from Perl distribution Data-Dmp), released on 2014-12-28.
+This document describes version 0.05 of Data::Dmp (from Perl distribution Data-Dmp), released on 2014-12-28.
 
 =head1 SYNOPSIS
 
@@ -190,6 +190,43 @@ expressions. This also removes ambiguity and saves one C<wantarray()> call.
 
 Exported by default. Return dump result as string. Unlike C<Data::Dump>'s C<dd>
 (a.k.a. C<dump>), it I<never> prints and only return the data.
+
+=head1 BENCHMARKS
+
+Because C<Data::Dmp>'s code is simpler than C<Data::Dump> and it does less,
+Data::Dmp is significantly faster than Data::Dump (around 5 times for some small
+data structures). C<Data::Dmp> is even faster than L<Data::Dumper> for some
+small data structures.
+
+=head1 FAQ
+
+=head2 When to use Data::Dmp? How does it compare to other dumper modules?
+
+Data::Dmp might be suitable for you if you want a relatively fast pure-Perl data
+structure dumper to eval-able Perl code. It produces compact, single-line Perl
+code but offers little/no formatting options. Data::Dmp and Data::Dump module
+family usually produce Perl code that is "more eval-able", e.g. it can recreate
+circular structure.
+
+Data::Dump produces nicer output (some alignment, use of range operator to
+shorten lists, use of base64 for binary data, etc) but no built-in option to
+produce compact/single-line output. It's also relatively slow. I usually use its
+variant, L<Data::Dump::Color>, for console debugging.
+
+Data::Dumper is core module, offers a lot of formatting options (like disabling
+hash key sorting, setting verboseness/indent level, and so on) but you usually
+have to configure it quite a bit before it does exactly like you want (that's
+why there are modules on CPAN that are just wrapping Data::Dumper with some
+configuration, like L<Data::Dumper::Concise> et al). It does not support dumping
+Perl code that can recreate circular structures.
+
+Currently Data::Dmp does not support "deparse". As for other features, currently
+they are implemented if I personally have the need for them.
+
+Of course, dumping to eval-able Perl code is slow (not to mention the cost of
+re-loading the code back to in-memory data, via eval-ing) compared to dumping to
+JSON, YAML, Sereal, or other format. So you need to decide first whether this is
+the appropriate route you want to take.
 
 =head1 SEE ALSO
 

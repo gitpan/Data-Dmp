@@ -1,45 +1,83 @@
-NAME
-    Data::Dmp - Dump Perl data structures
-
-VERSION
-    This document describes version 0.04 of Data::Dmp (from Perl
-    distribution Data-Dmp), released on 2014-12-28.
-
 SYNOPSIS
+
      use Data::Dmp; # exports dd() and dmp()
      dd [1, 2, 3];
 
 DESCRIPTION
+
     This module, Data::Dmp, is inspired by Data::Dump and is my personal
     experiment. I want some of Data::Dump's features which I currently need
     and don't need the others that I currently do not need. I also want a
     smaller code base so I can easily modify (or subclass) it for custom
     dumping requirements.
 
-    Compared to "Data::Dump", "Data::Dmp" is also pure-Perl, dumps Perl data
+    Compared to Data::Dump, Data::Dmp is also pure-Perl, dumps Perl data
     structure as runnable Perl code, supports circular/blessed references.
-    Unlike "Data::Dump", "Data::Dmp" does not identify tied data, does not
-    support globs, does not support filtering, and mostly does not bother to
-    align hash keys, identify ranges/repetition pattern. This makes the code
-    simpler.
+    Unlike Data::Dump, Data::Dmp does not identify tied data, does not
+    support globs, does not support filtering, and mostly does not bother
+    to align hash keys, identify ranges/repetition pattern. This makes the
+    code simpler.
 
-    I originally created "Data::Dmp" when wanting to write Data::Dmp::Org.
-    At first I tried to modify "Data::Dump", but then got distracted by the
+    I originally created Data::Dmp when wanting to write Data::Dmp::Org. At
+    first I tried to modify Data::Dump, but then got distracted by the
     extra bits that I don't need.
 
 FUNCTIONS
-  dd($data, ...) => $data ...
-    Exported by default. Like "Data::Dump"'s "dd" (a.k.a. "dump"), print one
-    or more data to STDOUT. Unlike "Data::Dump"'s "dd", it *always* prints
-    and return *the original data* (like XXX), making it convenient to
-    insert into expressions. This also removes ambiguity and saves one
-    "wantarray()" call.
 
-  dmp($data, ...) => $str
-    Exported by default. Return dump result as string. Unlike "Data::Dump"'s
-    "dd" (a.k.a. "dump"), it *never* prints and only return the data.
+ dd($data, ...) => $data ...
+
+    Exported by default. Like Data::Dump's dd (a.k.a. dump), print one or
+    more data to STDOUT. Unlike Data::Dump's dd, it always prints and
+    return the original data (like XXX), making it convenient to insert
+    into expressions. This also removes ambiguity and saves one wantarray()
+    call.
+
+ dmp($data, ...) => $str
+
+    Exported by default. Return dump result as string. Unlike Data::Dump's
+    dd (a.k.a. dump), it never prints and only return the data.
+
+BENCHMARKS
+
+    Because Data::Dmp's code is simpler than Data::Dump and it does less,
+    Data::Dmp is significantly faster than Data::Dump (around 5 times for
+    some small data structures). Data::Dmp is even faster than Data::Dumper
+    for some small data structures.
+
+FAQ
+
+ When to use Data::Dmp? How does it compare to other dumper modules?
+
+    Data::Dmp might be suitable for you if you want a relatively fast
+    pure-Perl data structure dumper to eval-able Perl code. It produces
+    compact, single-line Perl code but offers little/no formatting options.
+    Data::Dmp and Data::Dump module family usually produce Perl code that
+    is "more eval-able", e.g. it can recreate circular structure.
+
+    Data::Dump produces nicer output (some alignment, use of range operator
+    to shorten lists, use of base64 for binary data, etc) but no built-in
+    option to produce compact/single-line output. It's also relatively
+    slow. I usually use its variant, Data::Dump::Color, for console
+    debugging.
+
+    Data::Dumper is core module, offers a lot of formatting options (like
+    disabling hash key sorting, setting verboseness/indent level, and so
+    on) but you usually have to configure it quite a bit before it does
+    exactly like you want (that's why there are modules on CPAN that are
+    just wrapping Data::Dumper with some configuration, like
+    Data::Dumper::Concise et al). It does not support dumping Perl code
+    that can recreate circular structures.
+
+    Currently Data::Dmp does not support "deparse". As for other features,
+    currently they are implemented if I personally have the need for them.
+
+    Of course, dumping to eval-able Perl code is slow (not to mention the
+    cost of re-loading the code back to in-memory data, via eval-ing)
+    compared to dumping to JSON, YAML, Sereal, or other format. So you need
+    to decide first whether this is the appropriate route you want to take.
 
 SEE ALSO
+
     Data::Dump and other variations/derivate works in Data::Dump::*.
 
     Data::Dumper and its variants.
@@ -47,27 +85,4 @@ SEE ALSO
     Data::Printer.
 
     YAML, JSON, Storable, Sereal, and other serialization formats.
-
-HOMEPAGE
-    Please visit the project's homepage at
-    <https://metacpan.org/release/Data-Dmp>.
-
-SOURCE
-    Source repository is at <https://github.com/perlancar/perl-Data-Dmp>.
-
-BUGS
-    Please report any bugs or feature requests on the bugtracker website
-    <https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Dmp>
-
-    When submitting a bug or request, please include a test-file or a patch
-    to an existing test-file that illustrates the bug or desired feature.
-
-AUTHOR
-    perlancar <perlancar@cpan.org>
-
-COPYRIGHT AND LICENSE
-    This software is copyright (c) 2014 by perlancar@cpan.org.
-
-    This is free software; you can redistribute it and/or modify it under
-    the same terms as the Perl 5 programming language system itself.
 
