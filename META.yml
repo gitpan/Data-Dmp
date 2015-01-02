@@ -23,10 +23,10 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Dmp
   homepage: https://metacpan.org/release/Data-Dmp
   repository: git://github.com/perlancar/perl-Data-Dmp.git
-version: '0.05'
+version: '0.06'
 x_Dist_Zilla:
   perl:
-    version: '5.018001'
+    version: '5.018002'
   plugins:
     -
       class: Dist::Zilla::Plugin::GatherDir
@@ -203,7 +203,7 @@ x_Dist_Zilla:
             -
               class: Pod::Weaver::Section::Completion::PerinciCmdLine
               name: '@Author::PERLANCAR/Completion::PerinciCmdLine'
-              version: '0.08'
+              version: '0.09'
             -
               class: Pod::Weaver::Section::Homepage::DefaultCPAN
               name: '@Author::PERLANCAR/Homepage::DefaultCPAN'

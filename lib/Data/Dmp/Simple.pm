@@ -1,7 +1,7 @@
 package Data::Dmp::Simple;
 
-our $DATE = '2014-12-28'; # DATE
-our $VERSION = '0.05'; # VERSION
+our $DATE = '2015-01-02'; # DATE
+our $VERSION = '0.06'; # VERSION
 
 use 5.010001;
 use strict;
@@ -39,6 +39,13 @@ sub _dump {
         return "...";
     }
 
+    if ($ref eq 'Regexp' || $ref eq 'REGEXP') {
+        require re;
+        my ($pat, $mod) = re::regexp_pattern($val);
+        $pat =~ s|(?<!\\)(\\\\)*/|$1\\/|g; # escape non-escaped slashes
+        return "qr/$pat/$mod";
+    }
+
     my $class;
     if (blessed $val) {
         $class = $ref;
@@ -69,6 +76,8 @@ sub _dump {
         $res = "\\"._dump($$val, $subscript);
     } elsif ($ref eq 'REF') {
         $res = "\\"._dump($$val, $subscript);
+    } elsif ($ref eq 'CODE') {
+        $res = "sub{'DUMMY'}";
     } else {
         die "Sorry, I can't dump $val (ref=$ref) yet";
     }
@@ -115,7 +124,7 @@ Data::Dmp::Simple - Dump Perl data structures (simpler version)
 
 =head1 VERSION
 
-This document describes version 0.05 of Data::Dmp::Simple (from Perl distribution Data-Dmp), released on 2014-12-28.
+This document describes version 0.06 of Data::Dmp::Simple (from Perl distribution Data-Dmp), released on 2015-01-02.
 
 =head1 SYNOPSIS
 
@@ -167,7 +176,7 @@ perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by perlancar@cpan.org.
+This software is copyright (c) 2015 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
