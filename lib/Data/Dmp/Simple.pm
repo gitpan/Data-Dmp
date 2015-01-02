@@ -1,7 +1,7 @@
 package Data::Dmp::Simple;
 
 our $DATE = '2015-01-02'; # DATE
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 use 5.010001;
 use strict;
@@ -42,7 +42,7 @@ sub _dump {
     if ($ref eq 'Regexp' || $ref eq 'REGEXP') {
         require re;
         my ($pat, $mod) = re::regexp_pattern($val);
-        $pat =~ s|(?<!\\)(\\\\)*/|$1\\/|g; # escape non-escaped slashes
+        $pat =~ s|(?<!\\)((?:\\\\)*)/|$1\\/|g; # escape non-escaped slashes
         return "qr/$pat/$mod";
     }
 
@@ -124,7 +124,7 @@ Data::Dmp::Simple - Dump Perl data structures (simpler version)
 
 =head1 VERSION
 
-This document describes version 0.06 of Data::Dmp::Simple (from Perl distribution Data-Dmp), released on 2015-01-02.
+This document describes version 0.07 of Data::Dmp::Simple (from Perl distribution Data-Dmp), released on 2015-01-02.
 
 =head1 SYNOPSIS
 
